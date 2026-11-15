@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AstraSim: Lunar Outpost</title>
+<style>
+  body { background-color: #0b0c10; color: #66fcf1; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 50px; }
+  h1 { color: #ffffff; text-transform: uppercase; letter-spacing: 2px; }
+  #status { font-size: 1.2rem; margin-bottom: 30px; color: #c5c6c7; }
+  .bar-container { width: 80%; max-width: 600px; margin: 10px auto 20px auto; background-color: #1f2833; border-radius: 8px; padding: 5px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+  .bar { height: 30px; border-radius: 5px; transition: width 0.2s linear; }
+  #oxy-bar { background-color: #45a29e; width: 100%; }
+  #food-bar { background-color: #eebb4d; width: 100%; }
+  #pwr-bar { background-color: #c5c6c7; width: 100%; }
+  button { background-color: #45a29e; border: none; padding: 15px 30px; margin-bottom: 30px; color: #0b0c10; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; width: 250px; }
+  button:hover { background-color: #66fcf1; }
+  button:active { transform: scale(0.98); }
+</style>
+</head>
+<body>
+  <h1>AstraSim: Junior Astronaut Trainer</h1>
+  <p id="status">Maintain the outpost's critical systems!</p>
+  
+  <h3>Oxygen Level (O2)</h3>
+  <div class="bar-container"><div id="oxy-bar" class="bar"></div></div>
+  <button onclick="replenish('oxy')">Run O2 Scrubber</button>
+
+  <h3>Food Supply</h3>
+  <div class="bar-container"><div id="food-bar" class="bar"></div></div>
+  <button onclick="replenish('food')">Ration Supplies</button>
+
+  <h3>Solar Power</h3>
+  <div class="bar-container"><div id="pwr-bar" class="bar"></div></div>
+  <button onclick="replenish('pwr')">Clean Solar Panels</button>
+
+<script>
+  let resources = { oxy: 100, food: 100, pwr: 100 };
+  let gameInterval = setInterval(() => {
+    // Depletion rates
+    resources.oxy -= 3.5;
+    resources.food -= 1.5;
+    resources.pwr -= 2.5;
+    
+    // Update UI
+    document.getElementById('oxy-bar').style.width = resources.oxy + '%';
+    document.getElementById('food-bar').style.width = resources.food + '%';
+    document.getElementById('pwr-bar').style.width = resources.pwr + '%';
+
+    // Color warnings
+    if(resources.oxy < 30) document.getElementById('oxy-bar').style.backgroundColor = "red";
+    else document.getElementById('oxy-bar').style.backgroundColor = "#45a29e";
+
+    // Game Over check
+    if(resources.oxy <= 0 || resources.food <= 0 || resources.pwr <= 0) {
+      clearInterval(gameInterval);
+      document.getElementById('status').innerText = "MISSION FAILED. A critical resource was depleted.";
+      document.getElementById('status').style.color = "#ff4c4c";
+      document.getElementById('status').style.fontWeight = "bold";
+    }
+  }, 1000);
+
+  function replenish(type) {
+    if(resources.oxy <= 0 || resources.food <= 0 || resources.pwr <= 0) return; // Prevent clicking after game over
+    resources[type] += 15;
+    if(resources[type] > 100) resources[type] = 100;
+  }
+</script>
+</body>
+</html>
